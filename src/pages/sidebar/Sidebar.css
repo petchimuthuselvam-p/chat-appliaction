@@ -1,0 +1,28 @@
+.sidebar {
+  width: 200px;
+  background: #005782;
+  color: #fff;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.sidebar h3 {
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.sidebar-link {
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  margin: 10px 0;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.sidebar-link:hover,
+.sidebar-link.active {
+  background: #2563eb;
+}
+
+

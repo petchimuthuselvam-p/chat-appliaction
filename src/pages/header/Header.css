@@ -1,0 +1,32 @@
+.navbar .navbar-brand {
+  color: #fff !important;
+  font-weight: bold;
+  font-size: 20px;
+  text-decoration: none;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.navbar-link {
+  color: #fff !important;
+  font-size: 18px;
+  text-decoration: none;
+  margin-left: 20px;
+  transition: color 0.2s ease;
+}
+
+.navbar-link:hover {
+  color: #dcdcdc !important;
+}
+
+.navbar-link.active {
+  color: black !important;
+}
+
+.header-container {
+  padding: 10px;
+}

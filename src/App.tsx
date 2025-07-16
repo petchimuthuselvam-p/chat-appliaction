@@ -1,26 +1,46 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import Login from './pages/login/login';
+import GetEmployee from './pages/getEmployee/GetEmployee';
+import Dashboard from './pages/dashboard/Dashboard';
+import Sidebar from './pages/sidebar/Sidebar';
+import Header from './pages/header/Header';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 
-function App() {
+const App: React.FC = () => {
+  const location = useLocation();
+  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+
+  useEffect(() => {
+    const handleStorage = () => {
+      setToken(localStorage.getItem('token'));
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
+
+  const showLayout = token && location.pathname !== '/login';
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app-container">
+      {showLayout && <Header />}
+      <div className="main-layout">
+        {showLayout && <Sidebar />}
+        <div className="main-content">
+          <Routes>
+            <Route path="/" element={<Navigate to="/login" />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={token ? <Dashboard /> : <Navigate to="/login" />} />
+            <Route path="/users" element={token ? <GetEmployee /> : <Navigate to="/login" />} />
+            <Route path="*" element={<Navigate to="/login" />} />
+          </Routes>
+        </div>
+      </div>
+      <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
     </div>
   );
-}
+};
 
 export default App;

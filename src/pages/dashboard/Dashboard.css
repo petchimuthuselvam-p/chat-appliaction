@@ -1,0 +1,57 @@
+.dashboard {
+  padding: 32px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f3f6fa;
+  min-height: 100vh;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #005782;
+  background: linear-gradient(90deg, #005782, #2e8bc0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+  margin-bottom: 20px;
+}
+
+/* Top summary cards */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.card h3 {
+  margin-bottom: 8px;
+  color: #005782;
+  font-size: 1.1rem;
+}
+
+.card p {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Charts row */
+.charts-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.chart {
+  text-align: center;
+  width: 50%;
+}
