@@ -86,7 +86,6 @@ h2 {
 
 .pagination button:disabled {
   background: #b0bec5;
-  cursor: not-allowed;
 }
 
 .page-info {

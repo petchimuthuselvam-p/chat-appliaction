@@ -26,33 +26,35 @@ const GetEmployee: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-const fetchEmployees = async (pageNum: number = 1) => {
-  try {
-    const token = localStorage.getItem('token');
-    console.log('Fetched token:', token);  // ✅ add this line
+  const token = localStorage.getItem('token');
 
-    if (!token) {
-      setError('Missing token, please login again.');
-      return;
-    }
-
-    const res = await fetch(`http://localhost:8080/api/get-all?page=${pageNum}&size=5`, {
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+  const apiFetch = (url: string, options: RequestInit = {}) => {
+    return fetch(`http://localhost:8080/api${url}`, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+        ...(options.headers || {})
+      }
     });
-    const result = await res.json();
-    const dataArray: DemoEntity[] = Array.isArray(result.data) ? result.data : [];
-    setEmployees(dataArray);
+  };
 
-    const total = typeof result.total === 'number' ? result.total : dataArray.length;
-    const size = typeof result.size === 'number' ? result.size : 5;
-    setTotalPages(Math.max(1, Math.ceil(total / size)));
-    setError(null);
-  } catch (e: any) {
-    console.error('Fetch error:', e);
-    setError(e?.message || 'Failed to fetch employees');
-  }
-};
+  const fetchEmployees = async (pageNum: number = 1) => {
+    try {
+      const res = await apiFetch(`/get-users?page=${pageNum}&size=5`);
+      const result = await res.json();
+      const dataArray: DemoEntity[] = Array.isArray(result.data) ? result.data : [];
+      setEmployees(dataArray);
 
+      const total = typeof result.total === 'number' ? result.total : dataArray.length;
+      const size = typeof result.size === 'number' ? result.size : 5;
+      setTotalPages(Math.max(1, Math.ceil(total / size)));
+      setError(null);
+    } catch (e: any) {
+      console.error('Fetch error:', e);
+      setError(e?.message || 'Failed to fetch employees');
+    }
+  };
 
   useEffect(() => {
     fetchEmployees(page);
@@ -100,17 +102,14 @@ const fetchEmployees = async (pageNum: number = 1) => {
     if (!validateForm()) return;
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      if (!token) return;
-
-      const res = await fetch('http://localhost:8080/api/save-employee', {
+      const res = await apiFetch('/save-user', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           userName: editForm.user_name,
           dob: editForm.dob,
           email: editForm.email,
-          phoneNo: editForm.phone_no
+          phoneNo: editForm.phone_no,
+          roleName: 'USER'
         })
       });
       const data = await res.json();
@@ -133,12 +132,8 @@ const fetchEmployees = async (pageNum: number = 1) => {
     if (!validateForm() || !editingEmployee) return;
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      if (!token) return;
-
-      const res = await fetch(`http://localhost:8080/api/update-employee/${editingEmployee.id}`, {
+      const res = await apiFetch(`/update-user/${editingEmployee.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           userName: editForm.user_name,
           dob: editForm.dob,
@@ -164,12 +159,7 @@ const fetchEmployees = async (pageNum: number = 1) => {
 
   const toggleStatus = async (id: number) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-      await fetch(`http://localhost:8080/api/toggle-status/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
-      });
+      await apiFetch(`/toggle-status/${id}`, { method: 'PUT' });
       toast.success('Status updated');
       fetchEmployees(page);
     } catch (e) {
@@ -202,7 +192,7 @@ const fetchEmployees = async (pageNum: number = 1) => {
                 <th>DOB</th>
                 <th>Email</th>
                 <th>Phone</th>
-                <th>Action</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -238,15 +228,18 @@ const fetchEmployees = async (pageNum: number = 1) => {
           </table>
         </div>
         <div className="pagination">
-          <button onClick={() => setPage(prev => Math.max(prev - 1, 1))} disabled={page === 1}>Prev</button>
+          <button onClick={() => setPage(p => Math.max(p - 1, 1))} disabled={page === 1}>Prev</button>
           <span>Page {page} of {totalPages}</span>
-          <button onClick={() => setPage(prev => Math.min(prev + 1, totalPages))} disabled={page === totalPages}>Next</button>
+          <button onClick={() => setPage(p => Math.min(p + 1, totalPages))} disabled={page === totalPages}>Next</button>
         </div>
       </div>
 
       {showModal && (
         <Modal title={modalMode === 'add' ? 'Add New User' : `Edit User ID: ${editingEmployee?.id}`} onClose={() => setShowModal(false)}>
-          <form onSubmit={e => { e.preventDefault(); modalMode === 'add' ? saveNewEmployee() : saveEdit(); }}>
+          <form
+            className="modal-form"
+            onSubmit={e => { e.preventDefault(); modalMode === 'add' ? saveNewEmployee() : saveEdit(); }}
+          >
             <input type="text" name="user_name" placeholder="User Name" value={editForm.user_name || ''} onChange={handleInputChange} />
             {formErrors.user_name && <div className="field-error">{formErrors.user_name}</div>}
             <input type="date" name="dob" value={editForm.dob || ''} onChange={handleInputChange} />
@@ -267,3 +260,4 @@ const fetchEmployees = async (pageNum: number = 1) => {
 };
 
 export default GetEmployee;
+

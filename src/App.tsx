@@ -7,21 +7,24 @@ import Sidebar from './pages/sidebar/Sidebar';
 import Header from './pages/header/Header';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Settings from './pages/setting/setting';
 import './App.css';
 
 const App: React.FC = () => {
   const location = useLocation();
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+  const [role, setRole] = useState<string | null>(localStorage.getItem('role'));
 
   useEffect(() => {
     const handleStorage = () => {
       setToken(localStorage.getItem('token'));
+      setRole(localStorage.getItem('role'));
     };
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
-  const showLayout = token && location.pathname !== '/login';
+  const showLayout = !!token && location.pathname !== '/login';
 
   return (
     <div className="app-container">
@@ -31,16 +34,30 @@ const App: React.FC = () => {
         <div className="main-content">
           <Routes>
             <Route path="/" element={<Navigate to="/login" />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={token ? <Navigate to="/dashboard" /> : <Login />} />
             <Route path="/dashboard" element={token ? <Dashboard /> : <Navigate to="/login" />} />
-            <Route path="/users" element={token ? <GetEmployee /> : <Navigate to="/login" />} />
+            <Route path="/users" element={token && role === 'ADMIN' ? (<GetEmployee />) : token ? (
+              <Navigate to="/dashboard" />) : (<Navigate to="/login" />)
+            } />
+            <Route path="/setting" element={token && role === 'ADMIN' ? (<Settings />) : token ? (
+              <Navigate to="/dashboard" />) : (<Navigate to="/login" />)
+            } />
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
         </div>
       </div>
-      <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
+
+      <ToastContainer
+        position="top-right"
+        autoClose={1200}
+        hideProgressBar
+        closeOnClick
+        rtl={false}
+        theme="colored"
+      />
     </div>
   );
 };
 
 export default App;
+
