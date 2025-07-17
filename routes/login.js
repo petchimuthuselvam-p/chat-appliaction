@@ -5,19 +5,25 @@ const { User } = require('../models/table');
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password) return res.json({ code: "9999", message: "Missing fields" });
+  if (!email || !password)
+    return res.json({ code: "9999", message: "Missing fields" });
 
   try {
     const user = await User.findOne({ where: { email, password } });
-    if (!user) return res.json({ code: "9999", message: "Invalid credentials" });
+    if (!user)
+      return res.json({ code: "9999", message: "Invalid credentials" });
 
     const token = jwt.sign(
-      { id: user.id, userName: user.user_name },
+      {
+        id: user.id,
+        userName: user.user_name,
+        roleName: user.roleName
+      },
       process.env.SECRET_KEY,
       { expiresIn: '1h' }
     );
 
-    res.json({ code: "0000", message: "Login successful", token });
+    res.json({ code: "0000", message: "Login successful", token, role: user.roleName });
   } catch (e) {
     console.error('Login error:', e);
     res.status(500).json({ code: "9999", message: "Error during login" });
