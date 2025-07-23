@@ -15,7 +15,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/chat" element={<ChatScreen />} />
         {/* <Route path="/guest" element={<GuestChat />} /> */}
-        <Route path='home' element={<HomeChat/>}>
+        <Route path="/home" element={<HomeChat/>}>
           
         </Route>
       </Routes>

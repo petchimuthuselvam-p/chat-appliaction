@@ -1,0 +1,15 @@
+.user-item {
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.user-item:hover {
+  background-color: #f0f0f0;
+  color:#231942
+}
+
+.selected-user {
+  background-color: #d0ebff;
+  color:#231942 /* light blue */
+}

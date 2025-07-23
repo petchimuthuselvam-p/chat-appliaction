@@ -6,6 +6,7 @@ import bgImage from '../assets/AdobeStock_868510427_Preview.jpeg';
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const [user,setUser] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(''); // error message state
@@ -22,6 +23,7 @@ const SignIn = () => {
     try {
       const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
       localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res?.data.user));
       window.location.href = '/home';
     } catch (err: any) {
       console.error('Login failed:', err.response?.data || err.message);

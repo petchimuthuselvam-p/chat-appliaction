@@ -1,0 +1,18 @@
+.sidebar {
+  width: 280px;
+  background-color: #231942;
+  height: 100vh;
+  overflow-y: auto;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.online-indicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid #231942;
+}
