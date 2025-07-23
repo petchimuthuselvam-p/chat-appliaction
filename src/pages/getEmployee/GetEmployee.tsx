@@ -3,6 +3,9 @@ import { toast } from 'react-toastify';
 import Modal from '../../modal/Modal';
 import './GetEmployee.css';
 import '../../styles/global.css';
+import editIcon from '../../assests/edit-icon.png';
+import deleteIcon from '../../assests/delete-icon.png';
+
 
 interface DemoEntity {
   id: number;
@@ -25,6 +28,9 @@ const GetEmployee: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteEmployeeId, setDeleteEmployeeId] = useState<number | null>(null);
+
 
   const token = localStorage.getItem('token');
 
@@ -168,6 +174,31 @@ const GetEmployee: React.FC = () => {
     }
   };
 
+  const deleteEmployee = async () => {
+    if (deleteEmployeeId === null) return;
+    try {
+      setLoading(true);
+      const res = await apiFetch(`/delete-user/${deleteEmployeeId}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.code === '0000') {
+        toast.success('User deleted successfully!');
+        fetchEmployees(page);
+      } else {
+        toast.error(data.message || 'Failed to delete user');
+      }
+    } catch (e) {
+      console.error('Delete error:', e);
+      toast.error('Server error');
+    } finally {
+      setShowModal(false);
+      setShowDeleteModal(false);
+      setDeleteEmployeeId(null);
+      setLoading(false);
+    }
+  };
+
+
+
   return (
     <div className="dashboard">
       <h2>Admin Panel</h2>
@@ -215,13 +246,30 @@ const GetEmployee: React.FC = () => {
                         onClick={() => toggleStatus(emp.id)}>
                         {emp.status === 'active' ? 'Block' : 'Unblock'}
                       </button>
+
                       <button
-                        className="edit-btn"
+                        className="icon-button"
                         onClick={() => openEditModal(emp)}
-                        disabled={emp.status !== 'active'}>
-                        Edit
+                        disabled={emp.status !== 'active'}
+                        title="Edit"
+                      >
+                        <img src={editIcon} alt="Edit" width="18" height="18" />
+                      </button>
+
+                      <button
+                        className="icon-button"
+                        onClick={() => {
+                          setDeleteEmployeeId(emp.id);
+                          setShowDeleteModal(true);
+                        }}
+                        disabled={emp.status !== 'active'}
+                        title="Delete"
+                      >
+                        <img src={deleteIcon} alt="Delete" width="18" height="18" />
                       </button>
                     </td>
+
+
                   </tr>
                 ))}
             </tbody>
@@ -255,6 +303,20 @@ const GetEmployee: React.FC = () => {
           </form>
         </Modal>
       )}
+
+      {showDeleteModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h4>Are you sure you want to delete?</h4>
+            <div className="modal-buttons">
+              <button onClick={deleteEmployee}>OK</button>
+              <button onClick={() => setShowDeleteModal(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
     </div>
   );
 };

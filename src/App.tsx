@@ -9,6 +9,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Settings from './pages/setting/setting';
 import './App.css';
+import Register from './pages/register/Register';
+
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -43,6 +45,8 @@ const App: React.FC = () => {
               <Navigate to="/dashboard" />) : (<Navigate to="/login" />)
             } />
             <Route path="*" element={<Navigate to="/login" />} />
+            <Route path="/register" element={<Register />} />
+
           </Routes>
         </div>
       </div>
