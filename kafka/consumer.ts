@@ -1,4 +1,4 @@
-const { Kafka } = require('kafkajs');
+import { Kafka, EachMessagePayload } from 'kafkajs';
 
 const kafka = new Kafka({
   clientId: 'employee-consumer',
@@ -7,13 +7,14 @@ const kafka = new Kafka({
 
 const consumer = kafka.consumer({ groupId: 'employee-group' });
 
-const run = async () => {
+const run = async (): Promise<void> => {
   await consumer.connect();
   await consumer.subscribe({ topic: 'employee-topic', fromBeginning: true });
 
   await consumer.run({
-    eachMessage: async ({ topic, partition, message }) => {
-      console.log(`Received message from Kafka [${topic}]:`, message.value.toString());
+    eachMessage: async ({ topic, partition, message }: EachMessagePayload) => {
+      const value = message.value?.toString() || '';
+      console.log(`Received message from Kafka [${topic}]:`, value);
     },
   });
 };

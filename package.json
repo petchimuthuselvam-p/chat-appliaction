@@ -1,17 +1,16 @@
 {
-  "name": "backend",
+  "name": "admin-api",
   "version": "1.0.0",
-  "main": "server.js",
+  "type": "commonjs",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node server.js"
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "start": "ts-node controller/server.ts",
+    "nodemon": "nodemon controller/server.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "bcrypt": "^6.0.0",
-    "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
@@ -19,7 +18,20 @@
     "kafkajs": "^2.2.4",
     "nodemailer": "^7.0.5",
     "pg": "^8.16.3",
-    "sequelize": "^6.37.7",
-    "socket.io": "^4.8.1"
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.7"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/dotenv": "^8.2.3",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.1.0",
+    "@types/nodemailer": "^6.4.17",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
   }
 }

@@ -1,15 +1,15 @@
-const { Kafka, Partitioners } = require('kafkajs');
+import { Kafka, Partitioners, Producer } from 'kafkajs';
 
 const kafka = new Kafka({
   clientId: 'employee-app',
   brokers: ['localhost:9092'],
 });
 
-const producer = kafka.producer({
+const producer: Producer = kafka.producer({
   createPartitioner: Partitioners.LegacyPartitioner,
 });
 
-async function connectProducer() {
+export async function connectProducer(): Promise<void> {
   try {
     console.log('Connecting Kafka Producer...');
     await producer.connect();
@@ -19,7 +19,7 @@ async function connectProducer() {
   }
 }
 
-async function sendMessage(topic, message) {
+export async function sendMessage(topic: string, message: any): Promise<void> {
   try {
     console.log(`Sending message to Kafka topic [${topic}]...`);
     await producer.send({
@@ -31,8 +31,3 @@ async function sendMessage(topic, message) {
     console.error('Failed to send message to Kafka:', error);
   }
 }
-
-module.exports = {
-  connectProducer,
-  sendMessage,
-};
